@@ -24,10 +24,10 @@ func echoString(w http.ResponseWriter, r *http.Request) {
 }
 
 func MethodHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.Error(w, "404 Not Found", http.StatusNotFound)
-		return
-	}
+	// if r.URL.Path != "/" {
+	// 	http.Error(w, "404 Not Found", http.StatusNotFound)
+	// 	return
+	// }
 
 	objects := Objects{
 		Object{ID: 1, Name: "Object 1", Description: "Obj 1 desc", Active: true},
@@ -38,15 +38,17 @@ func MethodHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
-		fmt.Fprintf(w, "The request used a GET method. Here's some data, ya filthy animal:")
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(objects)
 	case "POST":
-		fmt.Fprintf(w, "The request used a POST method")
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 
 		if err := json.NewEncoder(w).Encode(objects); err != nil {
 			panic(err)
 		}
+		json.NewEncoder(w).Encode(objects)
 	default:
 		fmt.Fprintf(w, "The request used a non-GET or POST method")
 	}
